@@ -14,14 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import xadmin
-# from django.contrib import admin
-from django.urls import path
+from django.contrib import admin
+from django.conf import settings
+from django.urls import path, include
+from django.conf.urls import url
 from xadmin.plugins import xversion
+from rest_framework.schemas import get_schema_view
+from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
 xversion.register_models()
 xadmin.autodiscover()
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include('chia.routers')),
 ]
+
+if settings.DEBUG and False:
+    schema_view = get_schema_view(title='Users API', renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
+    urlpatterns += [url('^docs/$', schema_view)]

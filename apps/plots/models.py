@@ -7,21 +7,14 @@
 
 from django.contrib.auth.models import User
 from django.db import models
-
 from django.utils.html import format_html
 
-
-class Base(models.Model):
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from apps.base.models import BaseModel
 
 
-class UserKey(Base):
-    fingerprint = models.CharField(max_length=20, unique=True, verbose_name="指纹")
+class UserKey(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户名")
+    fingerprint = models.CharField(max_length=20, unique=True, verbose_name="指纹")
     master_public_key = models.CharField(max_length=200, blank=True, verbose_name="主公钥")
     farmer_public_key = models.CharField(max_length=200, blank=True, verbose_name="农夫公钥")
     pool_public_key = models.CharField(max_length=200, blank=True, verbose_name="池公钥")
@@ -33,7 +26,7 @@ class UserKey(Base):
         # unique_together = ('field1', 'field2',)
 
 
-class PlotsTask(Base):
+class PlotsTask(BaseModel):
     user_key = models.ForeignKey(UserKey, on_delete=models.CASCADE, verbose_name="用户秘钥")
     plot_size = models.IntegerField(default=32, verbose_name="绘图大小")
     num = models.IntegerField(default=1, verbose_name="绘图数量")
@@ -56,7 +49,7 @@ class PlotsTask(Base):
         )
 
 
-class PlotsTaskControl(Base):
+class PlotsTaskControl(BaseModel):
     TASK_STATUS = [
         ("unpublished", "未发布"),
         ("running", "执行中"),
@@ -70,7 +63,7 @@ class PlotsTaskControl(Base):
         verbose_name_plural = verbose_name
 
 
-class PlotsTaskResult(Base):
+class PlotsTaskResult(BaseModel):
     plots_task = models.ForeignKey(PlotsTask, on_delete=models.CASCADE, verbose_name="绘图任务")
     total_block = models.IntegerField(verbose_name="总块数")
     finished_block = models.IntegerField(verbose_name="当前块数")
