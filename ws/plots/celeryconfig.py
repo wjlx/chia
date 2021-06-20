@@ -6,14 +6,14 @@
 """
 
 broker_url = 'redis://:123456@127.0.0.1:6379'
-# result_backend = 'redis://:123456@127.0.0.1:6379/0'
-result_backend = 'django-db'
+result_backend = 'redis://:123456@127.0.0.1:6379/0'
+# result_backend = 'django-db'
 
 timezone = 'Asia/Shanghai'
 
-imports = (
-    'app.task',
-)
+# imports = (
+#     'app.task',
+# )
 
 
 task_serializer = 'msgpack'  # 任务序列化和反序列化使用msgpack方案

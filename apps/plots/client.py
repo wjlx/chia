@@ -5,6 +5,6 @@
 :File    : 
 """
 
-from tasks.plots import task
+from ws.plots import tasks
 
-task.add.apply_async(args=[2, 8])
+tasks.add.apply_async(args=[2, 8])
