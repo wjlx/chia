@@ -5,7 +5,6 @@
 :File    : 
 """
 
-from app import task
-
+from apps.plots import task
 
 task.add.apply_async(args=[2, 8])

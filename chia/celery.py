@@ -5,8 +5,9 @@
 :File    : 
 """
 
+import os
+
 from celery import Celery
 
+from django.conf import settings
 
-app = Celery('chia')
-app.config_from_object('app.celeryconfig')

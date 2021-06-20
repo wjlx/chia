@@ -6,7 +6,7 @@
 """
 
 import time
-from app import app
+from apps.plots import app
 
 
 @app.task(name="test")

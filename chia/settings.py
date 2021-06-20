@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-_z_d4ccyhuzr@@=ck+q=e3)s8xick%&cg$)5r4sc5yqg4e6xsf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'xadmin',
+    'crispy_forms',
+    'reversion',
+    'django_celery_results',
+    'rest_framework',
+
+    'apps.plots',
 ]
 
 MIDDLEWARE = [
@@ -104,9 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -124,3 +135,12 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# broker_url = 'redis://:123456@127.0.0.1:6379'
+# result_backend = 'redis://:123456@127.0.0.1:6379/0'
+# result_backend = 'django-db'
+
+
+CELERY_BROKER_URL = 'redis://:123456@127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_SERIALIZER = 'json'
