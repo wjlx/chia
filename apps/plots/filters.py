@@ -13,7 +13,7 @@ from .models import *
 class UserKeyFilter(FilterSet):
     class Meta:
         model = UserKey
-        fields = ('user_id', 'fingerprint')
+        fields = ('id', 'user_id', 'fingerprint')
 
 
 class PlotsTaskFilter(FilterSet):

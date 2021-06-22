@@ -53,11 +53,12 @@ def plots():
     for line in sub:
         line = line.strip()
 
+    sub.close()
     return "done"
 
 
 # @app.tasks(name="plots_test")
-def plots_test():
+def plots_test(id):
     count = 10
     plots_task = 1
     for i in range(count):
@@ -66,10 +67,25 @@ def plots_test():
             "total_block": count,
             "finished_block": i,
         }
+        # url = api['url'] + api['plots_task_result'] + str(id)
         url = api['url'] + api['plots_task_result']
-        response = requests.post(url, data)
+        # response = requests.post(url, data)
+        # response = requests.put(url, data)
+        response = requests.get(url, params={'id': id})
         print(response.json())
     return "done"
 
 
-plots_test()
+def get_user_key():
+    import json
+    cmd = f"{cfg['chia']} keys show"
+    pipe = os.popen(cmd)
+    msg = pipe.read()
+    msg = msg.split("\n\n")
+    msg = json.dumps(msg, indent=4)
+    print(msg)
+    pipe.close()
+
+
+# plots_test('1')
+get_user_key()

@@ -10,6 +10,16 @@ from rest_framework import serializers
 from .models import *
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """
+    用户管理
+    """
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'email', 'password')
+
+
 class UserKeySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserKey
@@ -68,4 +78,3 @@ class PlotsTaskResultSerializer(serializers.ModelSerializer):
         else:
             pt = PlotsTaskResult.objects.create(**validated_data)
         return pt
-

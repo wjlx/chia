@@ -89,8 +89,8 @@ class MixinView(object):
         return get_object_or_404(queryset, **kwargs)
 
 
-# class BaseModelViewSet(MixinView, ModelViewSet):
-#     pass
+class BaseModelViewSet(MixinView, ModelViewSet):
+    pass
 
 
 class BaseGenericViewSet(MixinView, GenericViewSet):
@@ -105,5 +105,5 @@ class BaseAPIView(MixinView, APIView):
     pass
 
 
-class BaseModelViewSet(ModelViewSet):
-    pagination_class = PageNumber
+# class BaseModelViewSet(ModelViewSet):
+#     pagination_class = PageNumber
