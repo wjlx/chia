@@ -67,6 +67,7 @@ class PlotsTaskResult(BaseModel):
     plots_task = models.ForeignKey(PlotsTask, on_delete=models.CASCADE, verbose_name="绘图任务")
     total_block = models.IntegerField(verbose_name="总块数")
     finished_block = models.IntegerField(verbose_name="当前块数")
+    message = models.TextField(max_length=100000, verbose_name="任务详情")
 
     class Meta:
         verbose_name = "绘图任务进度"

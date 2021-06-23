@@ -69,12 +69,11 @@ class PlotsTaskResultSerializer(serializers.ModelSerializer):
             return obj.plots_task.id
         return ''
 
-    def create(self, validated_data):
-        print(validated_data)
-        plots_task = validated_data['plots_task']
-        pt = PlotsTaskResult.objects.filter(plots_task__id=plots_task.id)
-        if pt:
-            pt.update(**validated_data)
-        else:
-            pt = PlotsTaskResult.objects.create(**validated_data)
-        return pt
+    # def create(self, validated_data):
+    #     plots_task = validated_data['plots_task']
+    #     pt = PlotsTaskResult.objects.filter(plots_task__id=plots_task.id)
+    #     if pt:
+    #         pt.update(**validated_data)
+    #     else:
+    #         pt = PlotsTaskResult.objects.create(**validated_data)
+    #     return pt

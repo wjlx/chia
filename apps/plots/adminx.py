@@ -45,6 +45,7 @@ xadmin.site.register(views.CommAdminView, GlobalSettings)
 
 class UserKeyModelAdmin(object):
     list_display = [
+        "id",
         "get_user",
         "fingerprint",
         "master_public_key",
@@ -75,6 +76,7 @@ class UserKeyModelAdmin(object):
 
 class PlotsTaskModelAdmin(object):
     list_display = [
+        "id",
         "get_user_fingerprint",
         "plot_size",
         "num",
@@ -119,6 +121,7 @@ class MyAction(BaseActionView):
 
 class PlotsTaskControlModelAdmin(object):
     list_display = [
+        "id",
         "get_plots_task_id",
         "status",
         "create_at",
@@ -136,6 +139,7 @@ class PlotsTaskControlModelAdmin(object):
 
 class PlotsTaskResultModelAdmin(object):
     list_display = [
+        "id",
         "get_plots_task",
         "total_block",
         "finished_block",
@@ -154,7 +158,10 @@ class PlotsTaskResultModelAdmin(object):
     get_plots_task.short_description = "绘图任务ID"
 
     def get_rate(self, obj):
-        return f"{(obj.finished_block / obj.total_block) * 100}%"
+        if obj.finished_block == 0:
+            return "0%"
+        else:
+            return f"{(obj.finished_block / obj.total_block) * 100}%"
 
     get_rate.short_description = "执行进度"
 

@@ -12,6 +12,8 @@ import requests
 from ws.plots import app
 from ws.config import plots_config as cfg
 from ws.config import api_config as api
+from ws.config import get_url
+from ws.plots.fingerprint import create_update_fingerprint
 
 
 header = {
@@ -19,14 +21,23 @@ header = {
 }
 
 
-@app.task(name="test")
-def add(x, y):
-    time.sleep(10)
-    return x + y
+def upload_plots_task():
+    data = {}
+    url = get_url("plots_task")
+    ufp = create_update_fingerprint()
+    data["user_key"] = ufp['id']
+    keys = ["size", "num", "buffer", "num_threads", "buckets", "tmp_dir", "tmp2_dir", "final_dir"]
+    data.update(dict(((k, cfg[k]) for k in keys if cfg[k])))
+    response = requests.post(url, data).json()
+    if response['status'] != "ok":
+        raise ValueError("任务上传失败！")
+    print("获取任务信息。")
+    return response['data']
 
 
 # @app.tasks(name="plots")
-def plots():
+def upload_plots_task_result(task_id):
+    url = get_url("plots_task_result")
     cmd = f"{cfg['chia']} plots create"
     if 'size' in cfg:
         cmd += f" -k {cfg['size']}"
@@ -49,43 +60,79 @@ def plots():
         raise ValueError("config.ini plots section must contain final_dir")
     cmd += f" -d {cfg['final_dir']}"
 
+    data = {
+        "plots_task": task_id,
+        "total_block": 0,
+        "finished_block": 0,
+        "message": "",
+    }
+
+    response = requests.put(url, data).json()
+    if response['status'] != "ok":
+        raise ValueError("上传任务初始化成功。")
+
+    ptr_id = response['data']['id']
+
     sub = os.popen(cmd)
     for line in sub:
-        line = line.strip()
+        data = {}
+        data['plots_task'] = task_id
+        data["total_block"] = 100
+        data["finished_block"] = 10
+        data["message"] = line
+        # line = line.strip()
+        response = requests.post(url + ptr_id, data).json()
+        if response['status'] != "ok":
+            raise ValueError("任务上传失败！")
 
     sub.close()
+    print("任务执行完成！")
     return "done"
 
 
-# @app.tasks(name="plots_test")
-def plots_test(id):
-    count = 10
-    plots_task = 1
-    for i in range(count):
-        data = {
-            "plots_task": plots_task,
-            "total_block": count,
-            "finished_block": i,
-        }
-        # url = api['url'] + api['plots_task_result'] + str(id)
-        url = api['url'] + api['plots_task_result']
-        # response = requests.post(url, data)
-        # response = requests.put(url, data)
-        response = requests.get(url, params={'id': id})
-        print(response.json())
+def upload_plots_task_result_test(task_id):
+    url = get_url("plots_task_result")
+    cmd = "ping www.baidu.com"
+
+    data = {
+        "plots_task": task_id,
+        "total_block": 0,
+        "finished_block": 0,
+        "message": "",
+    }
+
+    response = requests.post(url, data).json()
+    if response['status'] != "ok":
+        raise ValueError("上传任务初始化成功。")
+
+    ptr_id = response['data']['id']
+    count = 0
+    sub = os.popen(cmd)
+    print("任务执行中......")
+    for line in sub:
+        count += 1
+        data = {}
+        data["plots_task"] = task_id
+        data["total_block"] = 100
+        data["finished_block"] = count
+        data["message"] = line
+        # line = line.strip()
+        response = requests.put(url + str(ptr_id), data).json()
+        if response['status'] != "ok":
+            raise ValueError("任务上传失败！")
+
+        if count >= 100:
+            break
+
+    sub.close()
+    print("任务执行完成！")
     return "done"
 
 
-def get_user_key():
-    import json
-    cmd = f"{cfg['chia']} keys show"
-    pipe = os.popen(cmd)
-    msg = pipe.read()
-    msg = msg.split("\n\n")
-    msg = json.dumps(msg, indent=4)
-    print(msg)
-    pipe.close()
+def execute_plots_task():
+    plots_task = upload_plots_task()
+    # upload_plots_task_result(plots_task['id'])
+    upload_plots_task_result_test(plots_task['id'])
 
 
-# plots_test('1')
-get_user_key()
+execute_plots_task()

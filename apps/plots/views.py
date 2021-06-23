@@ -104,15 +104,15 @@ class PlotsTaskResultViewSet(BaseModelViewSet):
     """
     用户秘钥
     """
-    # queryset = PlotsTaskResult.objects.all().order_by('-update_at')
+    queryset = PlotsTaskResult.objects.all().order_by('-update_at')
     serializer_class = PlotsTaskResultSerializer
     # filter_backends = [PlotsTaskResultFilter, ]
     filter_class = PlotsTaskResultFilter
 
-    def get_queryset(self):
-        task_id = self.request.query_params.get("id", None)
-        queryset = PlotsTaskResult.objects.filter(id=task_id)
-        return queryset
+    # def get_queryset(self):
+    #     task_id = self.request.query_params.get("id", None)
+    #     queryset = PlotsTaskResult.objects.filter(id=task_id)
+    #     return queryset
 
     # def list(self, request, *args, **kwargs):
     #     # return_data = DEFAULT_RETURN_DATA.copy()
@@ -132,16 +132,15 @@ class PlotsTaskResultViewSet(BaseModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return Response(serializer.data[0])
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(DEFAULT_RETURN_DATA, status=status.HTTP_201_CREATED)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     # serializer.save(user=request.user)
+    #     return serializer.save()
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(DEFAULT_RETURN_DATA, status=status.HTTP_206_PARTIAL_CONTENT)
+    # def update(self, request, *args, **kwargs):
+    #     partial = kwargs.pop('partial', True)
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     return self.perform_update(serializer)

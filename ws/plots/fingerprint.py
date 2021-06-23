@@ -11,6 +11,8 @@ import requests
 
 from ws.config import api_config as api
 from ws.config import plots_config as cfg
+from ws.config import get_url
+
 
 header = {
     "Content-Type": "application/json"
@@ -26,15 +28,14 @@ fp_map = {
 
 
 def get_user():
-    url = api['url'] + api['user']
-    if not url.endswith('/'):
-        url += "/"
+    url = get_url('user')
     response = requests.get(url, params={'username': api['username']}).json()
     if response['status'] != "ok":
         raise ValueError(f"用户查询失败：{response['msg']}")
     data = response['data']
     if not data:
         raise ValueError("未查询到当前用户!")
+    print("查询当前用户。")
     return data[0]
 
 
@@ -58,12 +59,11 @@ def get_fingerprint():
     return data
 
 
-def update_fingerprint():
+def create_update_fingerprint():
+    response = None
     user = get_user()
     data = get_fingerprint()
-    url = api['url'] + api['user_key']
-    if not url.endswith('/'):
-        url += "/"
+    url = get_url("user_key")
     for d in data:
         d['user'] = user['id']
         if cfg['fingerprint'] == d['fingerprint']:
@@ -85,8 +85,10 @@ def update_fingerprint():
                 response = requests.post(url, d).json()
                 if response['status'] != "ok":
                     raise ValueError("创建用户秘钥失败！")
+    print("获取用户秘钥。")
+    return response['data']
 
 
 # get_user()
 # get_fingerprint()
-update_fingerprint()
+# create_update_fingerprint()
